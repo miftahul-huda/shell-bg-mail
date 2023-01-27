@@ -26,7 +26,7 @@ _python server.py_
 
 **To call the server to run a shell script :**
 
-_http://localhost:5050/\<scriptfilename>_
+_http://localhost:5050/{scriptfilename}_
 
 ## Configuration
 
