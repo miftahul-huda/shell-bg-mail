@@ -1,4 +1,4 @@
-# shell-bg-mail
+# shell-bq-mail
 
 ## About
 
