@@ -8,19 +8,19 @@ This is a python program to run a unix shell script stored in Google Cloud Stora
 
 **To use the mail program:**
 
-_python mail.py -t "$recepient" -s "$subject" -b "$emailbody"
+python mail.py -t "$recepient" -s "$subject" -b "$emailbody"
 
 **To use the BQ program:**
 
-_python3 bq.py -q "$query"_
+python3 bq.py -q "$query"
 
 **To run the server:**
 
-_python server.py_
+python server.py
 
 **To call the server to run a shell script :**
 
-_http://localhost:5050/{scriptfilename}_
+http://localhost:5050/{scriptfilename}
 
 ## Configuration
 
