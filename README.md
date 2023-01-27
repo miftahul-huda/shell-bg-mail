@@ -8,13 +8,7 @@ This is a python program to run a unix shell script stored in Google Cloud Stora
 
 **To use the mail program:**
 
-_python mail.py \\_
-
-_\-t "$recepient" \\_
-
-_\-s "$subject" \\_
-
-_\-b "$bodylog"_
+_python mail.py -t "$recepient" -s "$subject" -b "$emailbody"
 
 **To use the BQ program:**
 
