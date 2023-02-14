@@ -12,7 +12,7 @@ python mail.py -t "$recepient" -s "$subject" -b "$emailbody"
 
 **To use the BQ program:**
 
-python3 bq.py -q "$query"
+python3 bq_batch.py -q "$query"
 
 **To run the server:**
 

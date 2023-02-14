@@ -40,12 +40,15 @@ def sendmail(sfrom, to, subject, body, attachments):
    sender_email = sfrom
    receiver_email = to
 
+   body2 = body.replace("\n", "<br>")
+   #print(body)
+
    if(sender_email is None):
       sender_email = os.environ["smtp_user"]
    password = os.environ["smtp_password"]
    password = base64.b64decode(password).decode('utf-8')
 
-   print(password)
+   #print(password)
 
    message = MIMEMultipart("alternative")
    message["Subject"] = subject
@@ -54,20 +57,24 @@ def sendmail(sfrom, to, subject, body, attachments):
 
    # Create the plain-text and HTML version of your message
    
-   html = f"""\
+   html = """\
    <html>
+   <head></head>
    <body>
-      {body}
+   """ + body2 + """
    </body>
    </html>
    """
 
    # Turn these into plain/html MIMEText objects
+   text = MIMEText(body, "plain")
    html = MIMEText(html, "html")
 
    # Add HTML/plain-text parts to MIMEMultipart message
    # The email client will try to render the last part first
+   message.attach(text)
    message.attach(html)
+
 
    if(attachments != None):
       for path in attachments:
