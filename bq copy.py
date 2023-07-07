@@ -33,8 +33,6 @@ def main():
     print("\n\nFinished running BQ scripts at " + str(now))
 
 def set_declare(query, declares, sets):
-    #print(declares)
-    #print(sets)
     decs = ""
     sets2 = ""
     for declare in declares:
@@ -57,22 +55,6 @@ def set_declare(query, declares, sets):
     query = decs + "" + sets2 + "" + query
     return query        
 
-def get_declare(query):
-    regex = "(declare\s+[A-Za-z0-9_]+\s+\w+)"
-    declares = re.findall(regex, query, re.IGNORECASE)
-    if(len(declares) > 0):
-        return declares[0]
-    else:
-        return ""
-    
-def get_set(query):
-    regex = "(set\s+[A-Za-z0-9_]+\s*=.+)"
-    sets = re.findall(regex, query, re.IGNORECASE)
-    if(len(sets) > 0):
-        return sets[0]
-    else:
-        return ""
-    
 def bqrun(q, start):
     # to store declare and set queries
     declares = []
@@ -91,30 +73,27 @@ def bqrun(q, start):
         if(query != None and len(query.strip()) > 0):
             if(counter >= start):
                 query = query.strip()
-                #print ("query raw")
-                #print (query)
+
                 try:
 
-                    if(query.lower().find("declare") != -1):
-                        declare = get_declare(query)
-                        declares.append(declare)
+                    if(query.lower().find("declare") == 0):
+                        declares.append(query)
                         run_query = False
-                    if(query.lower().find("set") != -1):
-                        sset = get_set(query)
-                        sets.append(sset)
+                    if(query.lower().find("set") == 0):
+                        sets.append(query)
                         run_query = False
                     
                     if(run_query):
                        
-                        print("======================================================")
                         query = set_declare(query, declares, sets)
+                        print("======================================================")
                         print("Query #{}:".format(counter))
                         print(query + "...")
 
                         #if(query != None and "select" in query.lower()):
                         #    print("\n======================================================\n" + query + "\n======================================================\n")
                         
-                    
+
                         job_config = bigquery.QueryJobConfig(
                             # Run at batch priority, which won't count toward concurrent rate limit.
                             priority=bigquery.QueryPriority.BATCH
@@ -151,7 +130,7 @@ def bqrun(q, start):
 
                             #print ("---Done bq.py Run query----")
                         print("======================================================")
-                        
+
                 except BadRequest as e:
                     print("\n\nQuery Error, Query# {}".format(counter))
                     #print("\n===================Error Query===================================\n")
