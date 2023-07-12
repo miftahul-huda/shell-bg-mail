@@ -35,6 +35,8 @@ def main():
 def set_declare(query, declares, sets):
     #print(declares)
     #print(sets)
+    addedDeclares = []
+    addedSets = []
     decs = ""
     sets2 = ""
     for declare in declares:
@@ -42,8 +44,9 @@ def set_declare(query, declares, sets):
         variables = re.findall(regex, declare, re.IGNORECASE)
         if(len(variables) > 0):
             variable = variables[0]
-            if(variable in query):
+            if(variable in query and declare not in addedDeclares):
                 decs += declare + ";\n"
+                addedDeclares.append(declare)
 
 
     for set in sets:
@@ -51,8 +54,9 @@ def set_declare(query, declares, sets):
         variables = re.findall(regex, set, re.IGNORECASE)
         if(len(variables) > 0):
             variable = variables[0]
-            if(variable in query):
+            if(variable in query and set not in addedSets):
                 sets2 += set + ";\n"
+                addedSets.append(set)
 
     query = decs + "" + sets2 + "" + query
     return query        
@@ -97,11 +101,13 @@ def bqrun(q, start):
 
                     if(query.lower().find("declare") != -1):
                         declare = get_declare(query)
-                        declares.append(declare)
+                        if(not declare in declares):
+                            declares.append(declare)
                         run_query = False
                     if(query.lower().find("set") != -1):
                         sset = get_set(query)
-                        sets.append(sset)
+                        if(not sset in sets):
+                            sets.append(sset)
                         run_query = False
                     
                     if(run_query):
@@ -114,7 +120,7 @@ def bqrun(q, start):
                         #if(query != None and "select" in query.lower()):
                         #    print("\n======================================================\n" + query + "\n======================================================\n")
                         
-                    
+                        
                         job_config = bigquery.QueryJobConfig(
                             # Run at batch priority, which won't count toward concurrent rate limit.
                             priority=bigquery.QueryPriority.BATCH
@@ -128,30 +134,42 @@ def bqrun(q, start):
                         t = now2 - now1
                         print("\nQuery is succesful and it took " + str(t) + " to complete.")
 
-                        if("select" in query.lower()):
-                            print("The query result:")
-                            #print(results._query_results._properties['schema']['fields'])
-                            fields  = results._query_results._properties['schema']['fields']
-                            fieldnames = ""
-                            for field in fields:
-                                fieldnames += field['name'] + "\t|"
+                        
+                        # Print the query result if the qeuery is a SELECT query.
+                        try:
+                            selectIdx = query.lower().strip().find("select")
+                            if(selectIdx == 0):  
+                                print("The query result:")
+                                #print(results._query_results._properties['schema']['fields'])
+                                fields  = results._query_results._properties['schema']['fields']
+                                fieldnames = ""
+                                for field in fields:
+                                    fieldnames += field['name'] + "\t|"
 
-                            if(len(fieldnames) > 0):
-                                fieldnames = fieldnames[0:len(fieldnames) -1]
-                            print (fieldnames)
+                                if(len(fieldnames) > 0):
+                                    fieldnames = fieldnames[0:len(fieldnames) -1]
+                                print (fieldnames)
 
-                            rowline = ""
-                            for row in rows:
-                                # Row values can be accessed by field name or index.
-                                for f in fields:
-                                    rowline += str(row[f['name']]) + "\t"                    
-                                print(rowline)
                                 rowline = ""
-                        
+                                for row in rows:
+                                    # Row values can be accessed by field name or index.
+                                    for f in fields:
+                                        rowline += str(row[f['name']]) + "\t"                    
+                                    print(rowline)
+                                    rowline = ""
+                            
 
-                            #print ("---Done bq.py Run query----")
-                        print("======================================================")
+                                #print ("---Done bq.py Run query----")
+                            else:
+                                print("No Row Result")
+
+                        except:
+                            print("No Row Result")
+
                         
+                        print("======================================================")
+
+                    
                 except BadRequest as e:
                     print("\n\nQuery Error, Query# {}".format(counter))
                     #print("\n===================Error Query===================================\n")
@@ -168,7 +186,7 @@ def bqrun(q, start):
                     #print("\n===================Error Query===================================\n")
                     print (query)
                     #print("\n===================/Error Query===================================\n")
-                    if(results.errors != None):
+                    if(isinstance(results, str) == False and results.errors != None):
                         print(results.errors)
                     print("======================================================")
             
