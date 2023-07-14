@@ -121,7 +121,7 @@ def bqrun(q, start):
                         #if(query != None and "select" in query.lower()):
                         #    print("\n======================================================\n" + query + "\n======================================================\n")
                         
-                        """
+                        
                         job_config = bigquery.QueryJobConfig(
                             # Run at batch priority, which won't count toward concurrent rate limit.
                             priority=bigquery.QueryPriority.BATCH
@@ -170,7 +170,7 @@ def bqrun(q, start):
 
                         
                         print("======================================================")
-                        """
+                        
                     
                 except BadRequest as e:
                     print("\n\nQuery Error, Query# {}".format(counter))
