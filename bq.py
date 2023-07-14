@@ -34,7 +34,7 @@ def main():
 
 def set_declare(query, declares, sets):
     #print(declares)
-    print(sets)
+    #print(sets)
     addedDeclares = []
     addedSets = []
     decs = ""
@@ -70,7 +70,7 @@ def get_declare(query):
         return ""
     
 def get_set(query):
-    regex = "(set\s+[A-Za-z0-9_]+\s*=[\\n.]*)"
+    regex = "(set\s+[A-Za-z0-9_]+\s*=[\S\n\t\v ]*)"
     sets = re.findall(regex, query, re.IGNORECASE)
     if(len(sets) > 0):
         return sets[0]
