@@ -34,7 +34,7 @@ def main():
 
 def set_declare(query, declares, sets):
     #print(declares)
-    #print(sets)
+    print(sets)
     addedDeclares = []
     addedSets = []
     decs = ""
@@ -70,7 +70,7 @@ def get_declare(query):
         return ""
     
 def get_set(query):
-    regex = "(set\s+[A-Za-z0-9_]+\s*=.+)"
+    regex = "(set\s+[A-Za-z0-9_]+\s*=[\\n.]*)"
     sets = re.findall(regex, query, re.IGNORECASE)
     if(len(sets) > 0):
         return sets[0]
@@ -105,7 +105,8 @@ def bqrun(q, start):
                             declares.append(declare)
                         run_query = False
                     if(query.lower().find("set") != -1):
-                        sset = get_set(query)
+                        #sset = get_set(query)
+                        sset = query
                         if(not sset in sets):
                             sets.append(sset)
                         run_query = False
@@ -120,11 +121,12 @@ def bqrun(q, start):
                         #if(query != None and "select" in query.lower()):
                         #    print("\n======================================================\n" + query + "\n======================================================\n")
                         
-                        
+                        """
                         job_config = bigquery.QueryJobConfig(
                             # Run at batch priority, which won't count toward concurrent rate limit.
                             priority=bigquery.QueryPriority.BATCH
                         )
+
 
                         now1 = datetime.datetime.now()
                         results = client.query(query, job_config)  # Make an API request.
@@ -168,7 +170,7 @@ def bqrun(q, start):
 
                         
                         print("======================================================")
-
+                        """
                     
                 except BadRequest as e:
                     print("\n\nQuery Error, Query# {}".format(counter))
